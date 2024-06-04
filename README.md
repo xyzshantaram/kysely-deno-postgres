@@ -1,7 +1,7 @@
-# Kysely Deno Postgres
+# kysely-deno-postgres
 
 Connector for [Kysely](https://koskimas.github.io/kysely/index.html) with
-[deno-postgres](https://deno-postgres.com).
+[deno-postgres](https://deno-postgres.com). Fork of <https://github.com/Industrial/kysely-deno-postgres>.
 
 ## Usage
 
@@ -11,8 +11,8 @@ import {
   PostgresAdapter,
   PostgresIntrospector,
   PostgresQueryCompiler,
-} from "https://esm.sh/kysely";
-import { PostgreSQLDriver } from "https://deno.land/x/kysely_deno_postgres/mod.ts";
+} from "npm:kysely:0.27.3";
+import { PostgreSQLDriver } from "https://gitlab.com/soapbox-pub/kysely-deno-postgres/-/raw/main/mod.ts";
 
 const kysely = new Kysely({
   dialect: {
