@@ -4,17 +4,17 @@ import { PostgreSQLDriverDatabaseConnection } from './PostgreSQLDriverDatabaseCo
 
 export type PostgreSQLDriverOptions = postgres.ClientOptions & {
   connectionString?: postgres.ConnectionString;
+  pool?: postgres.Pool;
 };
 
 export class PostgreSQLDriver implements kysely.Driver {
   options: PostgreSQLDriverOptions;
   poolSize: number;
   pool: postgres.Pool | null;
-
   constructor(options: PostgreSQLDriverOptions, poolSize = 1) {
     this.options = options;
     this.poolSize = poolSize;
-    this.pool = null;
+    this.pool = options.pool || null;
   }
 
   private getIsolationLevel(
@@ -36,11 +36,12 @@ export class PostgreSQLDriver implements kysely.Driver {
 
   // deno-lint-ignore require-await
   async init() {
-    this.pool = new postgres.Pool(
-      this.options.connectionString || this.options,
-      this.poolSize,
-      true,
-    );
+    if (!this.pool)
+      this.pool = new postgres.Pool(
+        this.options.connectionString || this.options,
+        this.poolSize,
+        true,
+      );
   }
 
   async acquireConnection() {
@@ -75,7 +76,7 @@ export class PostgreSQLDriver implements kysely.Driver {
     if (
       connection.transaction &&
       connection.client.session.current_transaction ===
-        connection.transaction.name
+      connection.transaction.name
     ) {
       await connection.transaction.rollback();
     }
